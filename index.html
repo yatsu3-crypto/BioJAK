@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>皮膚科 バイオ・JAK 参照</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent-atopy: #58a6ff;
+    --accent-jak: #3fb950;
+    --accent-psoriasis: #d2a8ff;
+    --accent-other: #ffa657;
+    --accent-danger: #f85149;
+    --accent-warn: #d29922;
+    --accent-conventional: #79c0ff;
+    --radius: 10px;
+    --mono: 'DM Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ─── Header ─── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  header h1 {
+    font-size: 15px; font-weight: 700; letter-spacing: .05em;
+    white-space: nowrap;
+  }
+  header h1 span { color: var(--accent-atopy); }
+
+  #search {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .2s;
+  }
+  #search:focus { border-color: var(--accent-atopy); }
+  #search::placeholder { color: var(--muted); }
+
+  /* ─── Category tabs ─── */
+  .tabs {
+    display: flex; gap: 6px; overflow-x: auto;
+    padding: 10px 16px 0;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    white-space: nowrap;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .tab.active, .tab:hover {
+    border-color: currentColor;
+    color: var(--text);
+  }
+  .tab[data-cat="all"].active    { color: var(--text); border-color: var(--text); }
+  .tab[data-cat="atopy"].active  { color: var(--accent-atopy); border-color: var(--accent-atopy); background: rgba(88,166,255,.08); }
+  .tab[data-cat="jak"].active    { color: var(--accent-jak); border-color: var(--accent-jak); background: rgba(63,185,80,.08); }
+  .tab[data-cat="psoriasis"].active { color: var(--accent-psoriasis); border-color: var(--accent-psoriasis); background: rgba(210,168,255,.08); }
+  .tab[data-cat="other"].active  { color: var(--accent-other); border-color: var(--accent-other); background: rgba(255,166,87,.08); }
+  .tab[data-cat="conventional"].active { color: var(--accent-conventional); border-color: var(--accent-conventional); background: rgba(121,192,255,.08); }
+
+  /* ─── Compare button ─── */
+  .toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 16px;
+  }
+  .toolbar small { color: var(--muted); font-size: 11px; }
+  .btn-compare {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--accent-jak);
+    background: rgba(63,185,80,.12);
+    color: var(--accent-jak);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-compare:hover { background: rgba(63,185,80,.25); }
+
+  /* ─── Card grid ─── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+    padding: 0 16px 80px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .2s, transform .1s;
+    position: relative;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card[data-cat="atopy"]     { border-left: 3px solid var(--accent-atopy); }
+  .card[data-cat="jak"]       { border-left: 3px solid var(--accent-jak); }
+  .card[data-cat="psoriasis"] { border-left: 3px solid var(--accent-psoriasis); }
+  .card[data-cat="other"]     { border-left: 3px solid var(--accent-other); }
+  .card[data-cat="conventional"] { border-left: 3px solid var(--accent-conventional); }
+  .card.open { border-color: var(--accent-atopy); }
+
+  .card-header {
+    padding: 12px 14px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+  }
+  .card-name { font-size: 16px; font-weight: 700; }
+  .card-generic { font-size: 11px; color: var(--muted); margin-top: 1px; font-family: var(--mono); }
+  .badge {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 7px; border-radius: 20px;
+    white-space: nowrap; margin-top: 2px;
+  }
+  .badge-atopy     { background: rgba(88,166,255,.15); color: var(--accent-atopy); }
+  .badge-jak       { background: rgba(63,185,80,.15); color: var(--accent-jak); }
+  .badge-psoriasis { background: rgba(210,168,255,.15); color: var(--accent-psoriasis); }
+  .badge-other     { background: rgba(255,166,87,.15); color: var(--accent-other); }
+  .badge-conventional { background: rgba(121,192,255,.15); color: var(--accent-conventional); }
+
+  /* indication tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 14px 10px; }
+  .tag {
+    font-size: 10px; padding: 2px 7px;
+    background: var(--surface2); border-radius: 4px;
+    color: var(--muted); border: 1px solid var(--border);
+  }
+  .tag.highlight { color: var(--text); border-color: var(--muted); }
+
+  /* expand section */
+  .card-body { display: none; border-top: 1px solid var(--border); }
+  .card.open .card-body { display: block; }
+
+  .section { padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-title {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .section-content { font-size: 13px; line-height: 1.8; }
+
+  .dose-block {
+    background: var(--surface2);
+    border-radius: 6px; padding: 8px 10px;
+    font-family: var(--mono); font-size: 12px;
+    line-height: 1.9;
+  }
+  .dose-label { color: var(--muted); font-size: 10px; }
+
+  .warn-list { list-style: none; }
+  .warn-list li {
+    padding: 3px 0;
+    display: flex; align-items: baseline; gap: 6px;
+    font-size: 12.5px;
+  }
+  .warn-list li::before { content: "⚠"; font-size: 11px; color: var(--accent-warn); flex-shrink: 0; }
+  .danger-list li::before { content: "✕"; font-size: 11px; color: var(--accent-danger); }
+
+  .monitor-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  }
+  .monitor-item {
+    background: var(--surface2); border-radius: 6px;
+    padding: 6px 8px; font-size: 11.5px;
+  }
+  .monitor-item .mi-label { color: var(--muted); font-size: 10px; margin-bottom: 1px; }
+
+  .ae-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12.5px; border-bottom: 1px solid var(--border); }
+  .ae-row:last-child { border: none; }
+  .ae-freq { font-family: var(--mono); font-size: 11px; color: var(--accent-atopy); }
+
+  /* ─── Comparison modal ─── */
+  .modal-bg {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.7); z-index: 200;
+    overflow-y: auto; padding: 20px 10px;
+  }
+  .modal-bg.show { display: block; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    max-width: 900px; margin: 0 auto;
+    padding: 20px;
+  }
+  .modal h2 { font-size: 16px; margin-bottom: 14px; }
+  .modal-close {
+    float: right; background: none; border: none;
+    color: var(--muted); font-size: 20px; cursor: pointer;
+  }
+  .compare-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+  }
+  .compare-table th, .compare-table td {
+    border: 1px solid var(--border);
+    padding: 7px 10px; text-align: left; vertical-align: top;
+  }
+  .compare-table th { background: var(--surface2); font-weight: 600; font-size: 11px; color: var(--muted); }
+  .compare-table td:first-child { font-weight: 600; color: var(--text); }
+  .compare-table tr:hover td { background: rgba(255,255,255,.02); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>皮膚科<span>Bio/JAK</span></h1>
+  <input id="search" type="search" placeholder="薬剤名・成分名・適応で検索…">
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-cat="all">すべて</button>
+  <button class="tab" data-cat="atopy">アトピーバイオ</button>
+  <button class="tab" data-cat="jak">JAK阻害薬</button>
+  <button class="tab" data-cat="psoriasis">乾癬バイオ</button>
+  <button class="tab" data-cat="other">その他</button>
+  <button class="tab" data-cat="conventional">従来型全身療法</button>
+</div>
+
+<div class="toolbar">
+  <small id="count"></small>
+  <button class="btn-compare" onclick="openCompare()">📊 比較表</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<!-- Comparison Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <button class="modal-close" onclick="closeCompare()">×</button>
+    <h2>バイオ・JAK 使い分け比較表</h2>
+    <div style="overflow-x:auto">
+      <table class="compare-table" id="compareTable"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+const DRUGS = [
+  // ━━━ アトピー バイオ ━━━
+  {
+    id: "dupilumab",
+    name: "デュピクセント",
+    generic: "dupilumab",
+    cat: "atopy",
+    badge: "アトピーバイオ",
+    tags: ["アトピー性皮膚炎", "結節性痒疹", "好酸球性食道炎", "喘息"],
+    mechanism: "IL-4Rα拮抗（IL-4・IL-13両方を阻害）",
+    dose: [
+      "【AD成人】初回600mg SC → 以降300mg 隔週",
+      "【AD 15〜17歳 60kg以上】上記同",
+      "【AD 15〜17歳 60kg未満】初回400mg → 以降200mg 隔週",
+      "【AD 6〜14歳 30kg以上】初回300mg → 以降300mg 隔週",
+      "【AD 6〜14歳 15〜30kg】初回200mg → 以降200mg 月1",
+      "【結節性痒疹 成人】初回600mg → 以降300mg 隔週",
+    ],
+    contraindication: ["本剤成分に過敏症の既往"],
+    caution: ["蠕虫感染のある患者（治療後に投与）", "結膜炎・眼瞼炎に注意（定期的な眼科評価）", "好酸球増多症"],
+    ae: [
+      { name: "結膜炎・眼瞼炎", freq: "約10%", severity: "中" },
+      { name: "注射部位反応", freq: "約10%", severity: "軽" },
+      { name: "好酸球増多", freq: "約3%", severity: "軽" },
+      { name: "蠕虫感染増悪", freq: "稀", severity: "要注意" },
+    ],
+    monitor: [
+      { label: "好酸球数", timing: "投与前・適宜" },
+      { label: "眼症状", timing: "毎回確認" },
+      { label: "EASI/IGA", timing: "16週評価" },
+      { label: "感染症", timing: "随時" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IL-4Rα", freq: "隔週", route: "SC", age: "6歳〜", pregnancy: "可（要考慮）", infection: "✓生ワクチン不可" }
+  },
+  {
+    id: "tralokinumab",
+    name: "アドトラーザ",
+    generic: "tralokinumab",
+    cat: "atopy",
+    badge: "アトピーバイオ",
+    tags: ["アトピー性皮膚炎（中等症〜重症）"],
+    mechanism: "IL-13直接中和（IL-4は阻害せず）",
+    dose: [
+      "【成人】初回600mg SC → 以降300mg 隔週",
+      "16週以降 EASI良好例では300mg 月1回に延長可",
+    ],
+    contraindication: ["本剤成分に過敏症の既往"],
+    caution: ["結膜炎（デュピルマブより低頻度とされる）", "蠕虫感染"],
+    ae: [
+      { name: "上気道感染", freq: "約26%", severity: "軽" },
+      { name: "結膜炎", freq: "約7%", severity: "軽" },
+      { name: "注射部位反応", freq: "約7%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "眼症状", timing: "毎回確認" },
+      { label: "EASI/IGA", timing: "16週評価" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IL-13", freq: "隔週→月1", route: "SC", age: "成人", pregnancy: "慎重", infection: "✓生ワクチン不可" }
+  },
+  {
+    id: "lebrikizumab",
+    name: "イブグリース",
+    generic: "lebrikizumab",
+    cat: "atopy",
+    badge: "アトピーバイオ",
+    tags: ["アトピー性皮膚炎（中等症〜重症）"],
+    mechanism: "IL-13直接中和（IL-4/IL-13シグナル遮断）",
+    dose: [
+      "【成人・青年】初回500mg SC（250mg×2本）→ 2週後250mg → 以降250mg 隔週",
+      "16週以降奏効例では250mg 月1回",
+    ],
+    contraindication: ["本剤成分に過敏症の既往"],
+    caution: ["結膜炎", "注射部位反応"],
+    ae: [
+      { name: "結膜炎", freq: "約8%", severity: "軽" },
+      { name: "注射部位反応", freq: "約7%", severity: "軽" },
+      { name: "頭痛", freq: "約4%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "眼症状", timing: "毎回" },
+      { label: "EASI/IGA", timing: "16週評価" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IL-13", freq: "隔週→月1", route: "SC", age: "12歳〜", pregnancy: "慎重", infection: "✓生ワクチン不可" }
+  },
+
+  {
+    id: "nemolizumab",
+    name: "ミチーガ",
+    generic: "nemolizumab",
+    cat: "atopy",
+    badge: "アトピーバイオ",
+    tags: ["アトピー性皮膚炎（中等症〜重症、掻痒）", "結節性痒疹"],
+    mechanism: "IL-31受容体A（IL-31RA）拮抗 → 掻痒シグナルを直接遮断",
+    dose: [
+      "【AD 成人・13歳以上 体重≧30kg】60mg SC 月1回",
+      "  ※外用療法との併用が基本",
+      "【結節性痒疹 成人】60mg SC 月1回",
+    ],
+    contraindication: ["本剤成分に過敏症の既往"],
+    caution: ["AD炎症より掻痒優位例に特に有効", "眼症状（結膜炎）はデュピルマブより少ない", "IL-31は主に掻痒・神経線維密度に関与"],
+    ae: [
+      { name: "アトピー増悪", freq: "約5%", severity: "中" },
+      { name: "注射部位反応", freq: "約6%", severity: "軽" },
+      { name: "上気道感染", freq: "約10%", severity: "軽" },
+      { name: "頭痛", freq: "約5%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "掻痒NRS/VAS", timing: "毎回" },
+      { label: "EASI/IGA", timing: "16週評価" },
+      { label: "眼症状", timing: "毎回" },
+    ],
+    compare: { onset: "1〜2週（掻痒）", biologicType: "mAb IL-31RA", freq: "月1回", route: "SC", age: "13歳〜", pregnancy: "慎重", infection: "✓生ワクチン不可" }
+  },
+
+  // ━━━ JAK阻害薬（アトピー）━━━
+  {
+    id: "baricitinib",
+    name: "オルミエント",
+    generic: "baricitinib",
+    cat: "jak",
+    badge: "JAK阻害薬",
+    tags: ["アトピー性皮膚炎（中等症〜重症）", "関節リウマチ", "COVID-19"],
+    mechanism: "JAK1/JAK2選択的阻害",
+    dose: [
+      "【AD 成人】4mg/日 経口（1日1回）",
+      "  高齢者・腎機能低下（eGFR 30〜60）: 2mg/日",
+      "  eGFR < 30: 使用不可",
+    ],
+    contraindication: ["重篤な感染症", "好中球数<500/mm³", "ヘモグロビン<8g/dL", "eGFR<30", "妊婦"],
+    caution: ["帯状疱疹リスク", "静脈血栓塞栓症（VTE）", "脂質異常症", "悪性腫瘍リスク（長期）", "生ワクチン接種不可"],
+    ae: [
+      { name: "帯状疱疹", freq: "約4〜7%", severity: "重要" },
+      { name: "上気道感染", freq: "約15%", severity: "軽" },
+      { name: "LDL上昇", freq: "約10%", severity: "要管理" },
+      { name: "血球減少", freq: "稀", severity: "重要" },
+      { name: "VTE", freq: "<1%", severity: "重篤" },
+      { name: "悪性腫瘍", freq: "長期リスク", severity: "重篤" },
+    ],
+    monitor: [
+      { label: "CBC", timing: "投与前・4週・12週・以降定期" },
+      { label: "脂質（LDL/HDL）", timing: "投与前・12週・以降定期" },
+      { label: "肝機能", timing: "投与前・定期" },
+      { label: "eGFR/Cr", timing: "投与前・定期" },
+      { label: "TB検査", timing: "投与前必須" },
+      { label: "B型肝炎", timing: "投与前必須" },
+    ],
+    compare: { onset: "1〜2週", biologicType: "JAK1/2", freq: "1日1回", route: "経口", age: "15歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+  },
+  {
+    id: "upadacitinib",
+    name: "リンヴォック",
+    generic: "upadacitinib",
+    cat: "jak",
+    badge: "JAK阻害薬",
+    tags: ["アトピー性皮膚炎（中等症〜重症）", "関節リウマチ", "乾癬性関節炎", "強直性脊椎炎", "潰瘍性大腸炎"],
+    mechanism: "JAK1高選択的阻害",
+    dose: [
+      "【AD 成人・12歳以上 40kg以上】15mg/日（1日1回）",
+      "  重症例・奏効不十分: 30mg/日へ増量可",
+      "  eGFR 15〜45: 15mg まで",
+      "  eGFR < 15: 使用不可",
+    ],
+    contraindication: ["重篤な感染症", "好中球数<500/mm³", "ヘモグロビン<8g/dL", "eGFR<15", "妊婦"],
+    caution: ["帯状疱疹（バリシチニブより高頻度との報告）", "VTE", "悪性腫瘍", "CYP3A4阻害薬（クラリスロマイシン等）で血中濃度上昇", "生ワクチン不可"],
+    ae: [
+      { name: "帯状疱疹", freq: "約5〜10%", severity: "重要" },
+      { name: "痤瘡", freq: "約8%", severity: "軽" },
+      { name: "上気道感染", freq: "約20%", severity: "軽" },
+      { name: "CPK上昇", freq: "約10%", severity: "要確認" },
+      { name: "VTE", freq: "<1%", severity: "重篤" },
+    ],
+    monitor: [
+      { label: "CBC", timing: "投与前・4週・12週・定期" },
+      { label: "脂質", timing: "投与前・定期" },
+      { label: "CPK", timing: "投与前・定期" },
+      { label: "eGFR/Cr", timing: "投与前・定期" },
+      { label: "TB検査", timing: "投与前必須" },
+      { label: "B型肝炎", timing: "投与前必須" },
+    ],
+    compare: { onset: "1〜2週", biologicType: "JAK1選択的", freq: "1日1回", route: "経口", age: "12歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+  },
+  {
+    id: "abrocitinib",
+    name: "サイバインコ",
+    generic: "abrocitinib",
+    cat: "jak",
+    badge: "JAK阻害薬",
+    tags: ["アトピー性皮膚炎（中等症〜重症）"],
+    mechanism: "JAK1高選択的阻害",
+    dose: [
+      "【成人】100mg/日（1日1回）開始",
+      "  奏効不十分: 200mg/日へ増量",
+      "  eGFR < 30: 使用不可",
+    ],
+    contraindication: ["重篤な感染症", "好中球数<500/mm³", "血小板数<150,000/mm³（開始時）", "eGFR<30", "妊婦"],
+    caution: ["血小板減少（開始4週間は要注意）", "帯状疱疹", "悪心（特に開始時）", "VTE", "CYP2C19/CYP2C9阻害薬"],
+    ae: [
+      { name: "悪心", freq: "約10〜15%", severity: "中（開始時）" },
+      { name: "帯状疱疹", freq: "約4〜5%", severity: "重要" },
+      { name: "血小板減少", freq: "約3%", severity: "要モニター" },
+      { name: "頭痛", freq: "約6%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "CBC（血小板特に）", timing: "投与前・4週・定期" },
+      { label: "脂質", timing: "投与前・定期" },
+      { label: "eGFR", timing: "投与前・定期" },
+      { label: "TB検査", timing: "投与前必須" },
+      { label: "B型肝炎", timing: "投与前必須" },
+    ],
+    compare: { onset: "1〜2週", biologicType: "JAK1選択的", freq: "1日1回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+  },
+
+  // ━━━ 乾癬バイオ ━━━
+  {
+    id: "secukinumab",
+    name: "コセンティクス",
+    generic: "secukinumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬", "関節症性乾癬", "強直性脊椎炎", "膿疱性乾癬", "乾癬性紅皮症"],
+    mechanism: "IL-17A直接中和",
+    dose: [
+      "【尋常性乾癬 成人】300mg SC：0,1,2,3,4週 → 以降4週ごと",
+      "【関節症性乾癬（乾癬合併）】300mg同スケジュール",
+      "【関節症性乾癬（乾癬なし）】150mg同スケジュール",
+      "【膿疱性・紅皮症】150〜300mg",
+    ],
+    contraindication: ["重篤な感染症", "活動性Crohn病（悪化リスク）"],
+    caution: ["IBDの既往（UC/CD）", "真菌感染（カンジダ増加）", "好中球減少"],
+    ae: [
+      { name: "鼻咽頭炎", freq: "約12%", severity: "軽" },
+      { name: "口腔内カンジダ", freq: "約3%", severity: "軽" },
+      { name: "IBD悪化", freq: "稀", severity: "重要" },
+      { name: "好中球減少", freq: "稀", severity: "要確認" },
+    ],
+    monitor: [
+      { label: "PASI/BSA/IGA", timing: "12〜16週評価" },
+      { label: "IBD症状", timing: "毎回確認" },
+      { label: "感染症", timing: "随時" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IL-17A", freq: "月1回", route: "SC", age: "成人（6歳〜一部）", pregnancy: "慎重", infection: "カンジダ注意" }
+  },
+  {
+    id: "ixekizumab",
+    name: "トルツ",
+    generic: "ixekizumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬", "関節症性乾癬", "強直性脊椎炎"],
+    mechanism: "IL-17A直接中和（セクキヌマブより高親和性）",
+    dose: [
+      "【尋常性乾癬 成人】160mg SC（0週） → 80mg 2週ごと×6回 → 以降80mg 月1回",
+      "【関節症性乾癬】160mg → 80mg 月1回",
+    ],
+    contraindication: ["重篤な感染症", "活動性Crohn病"],
+    caution: ["IBD", "カンジダ感染", "好中球減少"],
+    ae: [
+      { name: "注射部位反応", freq: "約17%", severity: "軽" },
+      { name: "鼻咽頭炎", freq: "約14%", severity: "軽" },
+      { name: "口腔内カンジダ", freq: "約3%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "PASI評価", timing: "12週" },
+      { label: "IBD症状", timing: "毎回" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IL-17A", freq: "2週→月1", route: "SC", age: "成人（6歳〜一部）", pregnancy: "慎重", infection: "カンジダ注意" }
+  },
+  {
+    id: "bimekizumab",
+    name: "ビンゼレックス",
+    generic: "bimekizumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬（中等症〜重症）"],
+    mechanism: "IL-17A＋IL-17F両方を中和",
+    dose: [
+      "【成人】320mg SC：0,4,8,12,16週 → 以降8週ごと",
+      "  高BMI例は16週以降も4週ごと継続も可",
+    ],
+    contraindication: ["重篤な感染症"],
+    caution: ["IBD（IL-17F阻害によりリスク上昇懸念）", "カンジダ（IL-17A+F両阻害で頻度高め）"],
+    ae: [
+      { name: "口腔・外陰カンジダ", freq: "約18%", severity: "中（IL-17A/F両阻害）" },
+      { name: "鼻咽頭炎", freq: "約12%", severity: "軽" },
+      { name: "IBD", freq: "稀", severity: "要注意" },
+    ],
+    monitor: [
+      { label: "PASI/IGA", timing: "16週評価" },
+      { label: "カンジダ症状", timing: "毎回確認" },
+      { label: "IBD症状", timing: "毎回" },
+    ],
+    compare: { onset: "1〜2週", biologicType: "mAb IL-17A/F", freq: "8週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "カンジダ頻度高" }
+  },
+  {
+    id: "risankizumab",
+    name: "スキリージ",
+    generic: "risankizumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬", "関節症性乾癬", "潰瘍性大腸炎", "クローン病", "掌蹠膿疱症"],
+    mechanism: "IL-23p19選択的阻害",
+    dose: [
+      "【尋常性乾癬 成人】150mg SC：0,4週 → 以降12週ごと",
+      "【掌蹠膿疱症 成人】150mg SC：0,4週 → 以降12週ごと",
+    ],
+    contraindication: ["重篤な感染症"],
+    caution: ["TB（特に潜在性）", "感染リスク（IL-23経路）"],
+    ae: [
+      { name: "上気道感染", freq: "約12%", severity: "軽" },
+      { name: "頭痛", freq: "約5%", severity: "軽" },
+      { name: "疲労感", freq: "約3%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "TB検査", timing: "投与前必須" },
+      { label: "PASI評価", timing: "16週" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "12週ごと", route: "SC", age: "成人（1歳〜一部）", pregnancy: "慎重", infection: "TB注意" }
+  },
+  {
+    id: "guselkumab",
+    name: "トレムフィア",
+    generic: "guselkumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬", "関節症性乾癬", "掌蹠膿疱症"],
+    mechanism: "IL-23p19選択的阻害",
+    dose: [
+      "【尋常性乾癬 成人】100mg SC：0,4週 → 以降8週ごと",
+      "【掌蹠膿疱症 成人】100mg SC：0,4週 → 以降8週ごと",
+      "  ※PPP：日本初・世界初の生物学的製剤適応（2018年）",
+    ],
+    contraindication: ["重篤な感染症"],
+    caution: ["TB潜在感染", "感染リスク"],
+    ae: [
+      { name: "上気道感染", freq: "約14%", severity: "軽" },
+      { name: "頭痛", freq: "約5%", severity: "軽" },
+      { name: "注射部位反応", freq: "約3%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "TB検査", timing: "投与前" },
+      { label: "PASI評価", timing: "16週" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "8週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "TB注意" }
+  },
+  {
+    id: "tildrakizumab",
+    name: "イルミア",
+    generic: "tildrakizumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬（中等症〜重症）"],
+    mechanism: "IL-23p19選択的阻害",
+    dose: [
+      "【成人】100mg SC：0,4週 → 以降12週ごと",
+    ],
+    contraindication: ["重篤な感染症"],
+    caution: ["TB", "感染リスク"],
+    ae: [
+      { name: "上気道感染", freq: "約15%", severity: "軽" },
+      { name: "注射部位反応", freq: "約3%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "TB検査", timing: "投与前" },
+      { label: "PASI評価", timing: "16週" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "12週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "TB注意" }
+  },
+  {
+    id: "ustekinumab",
+    name: "ステラーラ",
+    generic: "ustekinumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬", "関節症性乾癬", "クローン病"],
+    mechanism: "IL-12/IL-23 p40サブユニット共通阻害",
+    dose: [
+      "【乾癬 体重≦100kg】45mg SC：0,4週 → 以降12週ごと",
+      "【乾癬 体重>100kg】90mg 同スケジュール",
+    ],
+    contraindication: ["重篤な感染症"],
+    caution: ["可逆性後頭葉白質脳症（RPLS）—稀", "悪性腫瘍リスク（長期）", "TB"],
+    ae: [
+      { name: "鼻咽頭炎", freq: "約17%", severity: "軽" },
+      { name: "頭痛", freq: "約8%", severity: "軽" },
+      { name: "上気道感染", freq: "約6%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "TB検査", timing: "投与前" },
+      { label: "PASI評価", timing: "12週" },
+      { label: "神経症状", timing: "随時（RPLS）" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "mAb IL-12/23p40", freq: "12週ごと", route: "SC/IV", age: "12歳〜", pregnancy: "慎重", infection: "TB注意" }
+  },
+  {
+    id: "brodalumab",
+    name: "ルミセフ",
+    generic: "brodalumab",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬（中等症〜重症）"],
+    mechanism: "IL-17受容体A（IL-17RA）阻害 → IL-17A/F/Eすべてをブロック",
+    dose: [
+      "【成人】210mg SC：0,1,2週 → 以降2週ごと",
+    ],
+    contraindication: ["重篤な感染症", "IBD（Crohn病）"],
+    caution: ["自殺念慮/行動（海外RCTで報告、RMPあり）", "IBD悪化", "好中球減少"],
+    ae: [
+      { name: "関節痛", freq: "約9%", severity: "軽" },
+      { name: "頭痛", freq: "約8%", severity: "軽" },
+      { name: "疲労感", freq: "約4%", severity: "軽" },
+      { name: "IBD悪化", freq: "稀", severity: "重要" },
+      { name: "自殺念慮", freq: "稀（要注意）", severity: "重篤" },
+    ],
+    monitor: [
+      { label: "精神症状・自殺念慮", timing: "毎回確認（RMP）" },
+      { label: "IBD症状", timing: "毎回" },
+      { label: "PASI評価", timing: "12週" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IL-17RA", freq: "2週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "IBD禁忌" }
+  },
+
+  {
+    id: "deucravacitinib",
+    name: "ソーティクツ",
+    generic: "deucravacitinib",
+    cat: "psoriasis",
+    badge: "乾癬バイオ",
+    tags: ["尋常性乾癬（中等症〜重症）"],
+    mechanism: "TYK2（チロシンキナーゼ2）アロステリック阻害 → IL-23・IL-12・IFN-α/β経路を選択的に遮断",
+    dose: [
+      "【成人】6mg/日 経口（1日1回）",
+      "  ※食事の影響なし・用量調整不要（腎・肝）",
+    ],
+    contraindication: ["本剤成分に過敏症の既往"],
+    caution: ["JAK阻害薬と異なりTYK2選択的 → VTE・血球減少・脂質異常リスクは低い", "生ワクチン接種不可", "CYP1A2阻害薬（フルボキサミン等）で血中濃度上昇", "TB・B型肝炎スクリーニング推奨"],
+    ae: [
+      { name: "上気道感染", freq: "約17%", severity: "軽" },
+      { name: "口腔ヘルペス", freq: "約4%", severity: "軽〜中" },
+      { name: "毛包炎", freq: "約4%", severity: "軽" },
+      { name: "頭痛", freq: "約5%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "TB検査", timing: "投与前推奨" },
+      { label: "B型肝炎", timing: "投与前推奨" },
+      { label: "PASI/IGA", timing: "16週評価" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "TYK2阻害（経口）", freq: "1日1回", route: "経口", age: "成人", pregnancy: "慎重", infection: "TB注意・生ワクチン不可" }
+  },
+
+  // ━━━ その他 ━━━
+  {
+    id: "omalizumab",
+    name: "ゾレア",
+    generic: "omalizumab",
+    cat: "other",
+    badge: "その他",
+    tags: ["慢性特発性蕁麻疹（CSU）", "気管支喘息"],
+    mechanism: "IgE中和（FcεRI発現ダウンレギュレーション）",
+    dose: [
+      "【CSU 成人・青年12歳以上】300mg SC 月1回",
+      "  12週で効果不十分→継続判断",
+    ],
+    contraindication: ["本剤成分に過敏症"],
+    caution: ["アナフィラキシー（投与後30分観察）", "寄生虫感染リスク"],
+    ae: [
+      { name: "アナフィラキシー", freq: "約0.1%", severity: "重篤（要観察30分）" },
+      { name: "注射部位反応", freq: "約15%", severity: "軽" },
+      { name: "頭痛", freq: "約7%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "アナフィラキシー", timing: "投与後30分必須観察" },
+      { label: "UAS7スコア", timing: "12週評価" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "mAb IgE", freq: "月1回", route: "SC", age: "12歳〜", pregnancy: "慎重", infection: "寄生虫注意" }
+  },
+  {
+    id: "dupilumab_pn",
+    name: "デュピクセント（結節性痒疹）",
+    generic: "dupilumab",
+    cat: "other",
+    badge: "その他",
+    tags: ["結節性痒疹（成人）"],
+    mechanism: "IL-4Rα拮抗（IL-4・IL-13阻害）",
+    dose: [
+      "【成人】初回600mg SC → 以降300mg 隔週",
+    ],
+    contraindication: ["本剤成分に過敏症の既往"],
+    caution: ["AD合併例に同用量で対応可（重複適応）", "結膜炎"],
+    ae: [
+      { name: "結膜炎", freq: "約8%", severity: "中" },
+      { name: "注射部位反応", freq: "約5%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "NRS（掻痒）", timing: "毎回" },
+      { label: "眼症状", timing: "毎回" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "mAb IL-4Rα", freq: "隔週", route: "SC", age: "成人", pregnancy: "可（要考慮）", infection: "✓生ワクチン不可" }
+  },
+  {
+    id: "ritlecitinib",
+    name: "リットフーロ",
+    generic: "ritlecitinib",
+    cat: "other",
+    badge: "その他",
+    tags: ["円形脱毛症（重症成人・青年）"],
+    mechanism: "JAK3およびTEC型キナーゼ（ITK/BTK等）共阻害 → T細胞・NK細胞活性化を遮断",
+    dose: [
+      "【成人・12歳以上】50mg/日 経口（1日1回）",
+      "  ※食事の影響なし",
+      "  eGFR < 30：慎重投与（データ限定）",
+    ],
+    contraindication: ["重篤な感染症", "妊婦"],
+    caution: ["帯状疱疹（JAK3阻害）", "VTE（JAK阻害薬クラス効果）", "TB・B型肝炎スクリーニング推奨", "生ワクチン不可", "CYP3A4阻害薬（イトラコナゾール等）で血中濃度上昇", "中止後の脱毛再燃に注意"],
+    ae: [
+      { name: "帯状疱疹", freq: "約2〜3%", severity: "重要" },
+      { name: "上気道感染", freq: "約15%", severity: "軽" },
+      { name: "ざ瘡", freq: "約7%", severity: "軽" },
+      { name: "頭痛", freq: "約6%", severity: "軽" },
+      { name: "下痢", freq: "約5%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "SALTスコア", timing: "24週評価" },
+      { label: "CBC", timing: "投与前・定期" },
+      { label: "TB・B型肝炎", timing: "投与前必須" },
+      { label: "脂質", timing: "投与前・定期" },
+    ],
+    compare: { onset: "12〜24週", biologicType: "JAK3/TEC阻害", freq: "1日1回", route: "経口", age: "12歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+  },
+  {
+    id: "baricitinib_aa",
+    name: "オルミエント（円形脱毛症）",
+    generic: "baricitinib",
+    cat: "other",
+    badge: "その他",
+    tags: ["円形脱毛症（重症成人）"],
+    mechanism: "JAK1/JAK2阻害（毛包免疫特権の回復）",
+    dose: [
+      "【成人 重症円形脱毛症】2mg/日（1日1回）経口",
+      "  奏効不十分（24週）→ 4mg/日へ増量可",
+    ],
+    contraindication: ["重篤な感染症", "eGFR<30", "妊婦"],
+    caution: ["帯状疱疹リスク", "VTE", "血球異常", "脱毛再燃（中止後）"],
+    ae: [
+      { name: "帯状疱疹", freq: "約4%", severity: "重要" },
+      { name: "LDL上昇", freq: "約8%", severity: "要管理" },
+      { name: "上気道感染", freq: "約10%", severity: "軽" },
+    ],
+    monitor: [
+      { label: "SALTスコア", timing: "24週評価" },
+      { label: "CBC・脂質", timing: "定期" },
+      { label: "TB・B肝", timing: "投与前" },
+    ],
+    compare: { onset: "12〜24週", biologicType: "JAK1/2", freq: "1日1回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+  },
+
+  // ━━━ 従来型全身療法 ━━━
+  {
+    id: "acitretin",
+    name: "チガソン",
+    generic: "acitretin",
+    cat: "conventional",
+    badge: "従来型全身療法",
+    tags: ["尋常性乾癬", "膿疱性乾癬", "乾癬性紅皮症", "掌蹠膿疱症"],
+    mechanism: "第2世代レチノイド（ビタミンA誘導体）→ 核内受容体（RAR）を介し角化・増殖を正常化",
+    dose: [
+      "【乾癬 成人】10〜30mg/日 経口（1日1回、食後）",
+      "  開始：10〜25mg → 効果・副作用みて調整",
+      "  最大：75mg/日（短期）",
+      "  ※光線療法（NB-UVB/PUVA）との併用で相乗効果",
+    ],
+    contraindication: ["妊婦・妊娠可能女性（催奇形性、中止後2年間避妊必要）", "授乳婦", "重篤な肝・腎障害", "高脂血症（コントロール不良）", "テトラサイクリン系抗菌薬との併用（脳圧亢進）"],
+    caution: ["催奇形性：女性には厳格な避妊指導（服薬中＋中止後2年）", "口唇・皮膚乾燥（ほぼ全例）", "肝機能障害", "脂質異常（TG・LDL上昇）", "骨・関節症状（長期）", "アルコール摂取でエトレチナートに変換→催奇形性リスク延長"],
+    ae: [
+      { name: "口唇炎・皮膚乾燥", freq: "ほぼ全例", severity: "軽〜中" },
+      { name: "TG/LDL上昇", freq: "約50%", severity: "要管理" },
+      { name: "肝機能障害", freq: "約10%", severity: "要モニター" },
+      { name: "脱毛", freq: "約20%", severity: "中（用量依存）" },
+      { name: "催奇形性", freq: "高リスク", severity: "重篤" },
+    ],
+    monitor: [
+      { label: "肝機能（AST/ALT）", timing: "投与前・1ヶ月・以降定期" },
+      { label: "脂質（TG/LDL）", timing: "投与前・1ヶ月・定期" },
+      { label: "妊娠検査（女性）", timing: "投与前・毎月" },
+      { label: "骨X線", timing: "長期使用時" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "レチノイド", freq: "1日1回", route: "経口", age: "成人（女性厳格管理）", pregnancy: "絶対禁忌", infection: "特になし" }
+  },
+  {
+    id: "cyclosporine",
+    name: "ネオーラル",
+    generic: "cyclosporine",
+    cat: "conventional",
+    badge: "従来型全身療法",
+    tags: ["尋常性乾癬", "アトピー性皮膚炎（重症）", "乾癬性紅皮症", "膿疱性乾癬"],
+    mechanism: "カルシニューリン阻害 → IL-2産生抑制 → T細胞活性化を遮断",
+    dose: [
+      "【乾癬 成人】2.5〜5mg/kg/日 経口（2分割）",
+      "  開始：2.5〜3mg/kg → 効果みて漸増、最大5mg/kg/日",
+      "【AD 成人・小児】3〜5mg/kg/日（2分割）",
+      "  ※連続使用は原則1年まで（腎毒性）",
+    ],
+    contraindication: ["腎機能障害（eGFR低下）", "コントロール不良の高血圧", "悪性腫瘍", "生ワクチン接種予定"],
+    caution: ["腎毒性（長期使用で不可逆性に注意）", "高血圧（用量依存）", "多毛・歯肉増殖", "感染リスク増大", "悪性リンパ腫・皮膚癌リスク（長期）", "多数の薬物相互作用（CYP3A4基質）—アゾール系抗真菌薬で血中濃度大幅上昇"],
+    ae: [
+      { name: "腎機能障害（Cr上昇）", freq: "用量依存", severity: "重要" },
+      { name: "高血圧", freq: "約25%", severity: "要管理" },
+      { name: "多毛", freq: "約20%", severity: "軽" },
+      { name: "歯肉増殖", freq: "約10%", severity: "軽" },
+      { name: "感染症増加", freq: "用量依存", severity: "重要" },
+    ],
+    monitor: [
+      { label: "Cr・eGFR", timing: "投与前・2週・毎月" },
+      { label: "血圧", timing: "毎回" },
+      { label: "CBC・肝機能", timing: "投与前・定期" },
+      { label: "脂質・尿酸", timing: "投与前・定期" },
+    ],
+    compare: { onset: "2〜4週", biologicType: "カルシニューリン阻害", freq: "1日2回", route: "経口", age: "成人・小児", pregnancy: "慎重（有益性判断）", infection: "感染・悪性腫瘍注意" }
+  },
+  {
+    id: "apremilast",
+    name: "オテズラ",
+    generic: "apremilast",
+    cat: "conventional",
+    badge: "従来型全身療法",
+    tags: ["尋常性乾癬（中等症〜重症）", "乾癬性関節炎", "ベーチェット病口腔潰瘍", "掌蹠膿疱症"],
+    mechanism: "PDE4（ホスホジエステラーゼ4）阻害 → cAMP増加 → TNF-α・IL-17・IL-23産生抑制",
+    dose: [
+      "【乾癬・PsA 成人】タイトレーション（6日間）：",
+      "  Day1朝10mg → 段階的増量",
+      "  Day6以降：30mg 1日2回（朝夕）維持",
+      "【掌蹠膿疱症 成人】同タイトレーション → 30mg 1日2回維持",
+      "  ※PPP：乾癬より即効性が高く4〜8週で奏効例多い",
+      "  eGFR < 30：30mg 1日1回に減量",
+      "  ※定期血液検査不要（大きな利点）",
+    ],
+    contraindication: ["妊婦"],
+    caution: ["悪心・下痢（開始2週間に多い、継続で軽減）", "体重減少（定期的に確認）", "うつ・自殺念慮（稀、既往者に注意）", "CYP3A4強力誘導薬（リファンピシン等）で効果減弱"],
+    ae: [
+      { name: "悪心", freq: "約17%", severity: "中（開始時）" },
+      { name: "下痢", freq: "約16%", severity: "中（開始時）" },
+      { name: "頭痛", freq: "約6%", severity: "軽" },
+      { name: "体重減少", freq: "約10%", severity: "要確認" },
+      { name: "うつ・自殺念慮", freq: "稀", severity: "要注意" },
+    ],
+    monitor: [
+      { label: "体重", timing: "定期（減少に注意）" },
+      { label: "精神症状", timing: "毎回確認" },
+      { label: "eGFR", timing: "投与前（減量判断）" },
+      { label: "PASI/BSA", timing: "16〜24週評価" },
+    ],
+    compare: { onset: "4〜8週", biologicType: "PDE4阻害", freq: "1日2回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "免疫抑制なし" }
+  },
+  {
+    id: "prednisolone",
+    name: "プレドニン",
+    generic: "prednisolone",
+    cat: "conventional",
+    badge: "従来型全身療法",
+    tags: ["膿疱性乾癬（緊急時）", "乾癬性紅皮症", "アトピー性皮膚炎（短期）", "蕁麻疹（重症）", "各種皮膚疾患の急性期"],
+    mechanism: "糖質コルチコイド受容体結合 → NF-κB抑制・PLA2阻害 → 広範な抗炎症・免疫抑制作用",
+    dose: [
+      "【膿疱性乾癬・紅皮症 急性期】0.5〜1mg/kg/日 経口",
+      "  ※乾癬への長期使用は離脱時リバウンドのため原則回避",
+      "【AD 短期】0.3〜0.5mg/kg/日 → 急性増悪の短期コントロールのみ",
+      "【蕁麻疹 重症】20〜40mg/日 短期（数日〜1週間）",
+      "  ※維持療法としての長期投与は皮膚疾患では基本非推奨",
+    ],
+    contraindication: ["重篤な感染症（特に真菌・結核の活動性）", "生ワクチン接種"],
+    caution: ["長期使用による全身副作用（骨粗鬆症・糖尿病・高血圧・白内障）", "HPA軸抑制→離脱時は漸減必須", "乾癬への長期使用→中止後リバウンド（膿疱化）リスク", "消化性潰瘍（PPIの予防投与考慮）", "感染症の症状をマスク", "精神症状（ステロイド精神病）"],
+    ae: [
+      { name: "血糖上昇", freq: "用量依存", severity: "要管理" },
+      { name: "骨粗鬆症", freq: "長期で高頻度", severity: "重要" },
+      { name: "感染症増悪", freq: "用量依存", severity: "重要" },
+      { name: "消化性潰瘍", freq: "約5〜10%", severity: "要予防" },
+      { name: "リバウンド（乾癬）", freq: "中止時", severity: "重篤（膿疱化）" },
+      { name: "副腎不全（離脱）", freq: "急激中止で", severity: "重篤" },
+    ],
+    monitor: [
+      { label: "血糖・HbA1c", timing: "定期" },
+      { label: "血圧", timing: "毎回" },
+      { label: "骨密度", timing: "長期使用時" },
+      { label: "眼圧・白内障", timing: "長期使用時" },
+      { label: "感染症", timing: "随時" },
+    ],
+    compare: { onset: "数日（急性期）", biologicType: "経口ステロイド", freq: "1日1〜数回", route: "経口", age: "全年齢", pregnancy: "慎重（有益性判断）", infection: "感染マスク・活動性TB禁忌" }
+  },
+];
+
+// ─── Render ───
+function catColor(cat) {
+  return { atopy: 'accent-atopy', jak: 'accent-jak', psoriasis: 'accent-psoriasis', other: 'accent-other' }[cat] || 'text';
+}
+
+function renderCards(drugs) {
+  const grid = document.getElementById('grid');
+  document.getElementById('count').textContent = `${drugs.length} 件`;
+  grid.innerHTML = '';
+  drugs.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.cat = d.cat;
+    card.dataset.id = d.id;
+    card.innerHTML = `
+      <div class="card-header" onclick="toggleCard('${d.id}')">
+        <div>
+          <div class="card-name">${d.name}</div>
+          <div class="card-generic">${d.generic}</div>
+        </div>
+        <span class="badge badge-${d.cat}">${d.badge}</span>
+      </div>
+      <div class="tags">
+        ${d.tags.map((t,i)=>`<span class="tag${i===0?' highlight':''}">${t}</span>`).join('')}
+      </div>
+      <div class="card-body" id="body-${d.id}">
+        <!-- 作用機序 -->
+        <div class="section">
+          <div class="section-title">⚙ 作用機序</div>
+          <div class="section-content">${d.mechanism}</div>
+        </div>
+        <!-- 用法・用量 -->
+        <div class="section">
+          <div class="section-title">💉 用法・用量</div>
+          <div class="dose-block">${d.dose.join('<br>')}</div>
+        </div>
+        <!-- 禁忌 -->
+        <div class="section">
+          <div class="section-title">🚫 禁忌</div>
+          <ul class="warn-list danger-list">
+            ${d.contraindication.map(c=>`<li>${c}</li>`).join('')}
+          </ul>
+        </div>
+        <!-- 注意事項 -->
+        <div class="section">
+          <div class="section-title">⚠ 主な注意事項</div>
+          <ul class="warn-list">
+            ${d.caution.map(c=>`<li>${c}</li>`).join('')}
+          </ul>
+        </div>
+        <!-- 副作用 -->
+        <div class="section">
+          <div class="section-title">📋 副作用プロファイル</div>
+          ${d.ae.map(a=>`<div class="ae-row"><span>${a.name}<span style="color:var(--muted);font-size:10px;margin-left:6px">${a.severity}</span></span><span class="ae-freq">${a.freq}</span></div>`).join('')}
+        </div>
+        <!-- モニタリング -->
+        <div class="section">
+          <div class="section-title">🔬 検査値モニタリング</div>
+          <div class="monitor-grid">
+            ${d.monitor.map(m=>`<div class="monitor-item"><div class="mi-label">${m.label}</div><div style="font-size:11px">${m.timing}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function toggleCard(id) {
+  const card = document.querySelector(`[data-id="${id}"]`);
+  card.classList.toggle('open');
+}
+
+// ─── Filter ───
+let currentCat = 'all';
+let currentQuery = '';
+
+function filterDrugs() {
+  let list = DRUGS;
+  if (currentCat !== 'all') list = list.filter(d => d.cat === currentCat);
+  if (currentQuery) {
+    const q = currentQuery.toLowerCase();
+    list = list.filter(d =>
+      d.name.toLowerCase().includes(q) ||
+      d.generic.toLowerCase().includes(q) ||
+      d.tags.some(t => t.includes(q)) ||
+      d.mechanism.toLowerCase().includes(q)
+    );
+  }
+  renderCards(list);
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentCat = tab.dataset.cat;
+    filterDrugs();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  currentQuery = e.target.value;
+  filterDrugs();
+});
+
+// ─── Compare Table ───
+function openCompare() {
+  const cols = ['薬剤名', '分類', '機序', '効果発現', '投与経路', '投与頻度', '対象年齢', '妊婦', '感染注意点'];
+  const rows = DRUGS.map(d => [
+    `<strong>${d.name}</strong><br><span style="font-size:10px;color:var(--muted)">${d.generic}</span>`,
+    `<span class="badge badge-${d.cat}">${d.badge}</span>`,
+    d.compare.biologicType,
+    d.compare.onset,
+    d.compare.route,
+    d.compare.freq,
+    d.compare.age,
+    d.compare.pregnancy,
+    d.compare.infection,
+  ]);
+  const table = document.getElementById('compareTable');
+  table.innerHTML = `
+    <tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr>
+    ${rows.map(r=>`<tr>${r.map((c,i)=>`<td>${c}</td>`).join('')}</tr>`).join('')}
+  `;
+  document.getElementById('modalBg').classList.add('show');
+}
+function closeCompare() {
+  document.getElementById('modalBg').classList.remove('show');
+}
+document.getElementById('modalBg').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalBg')) closeCompare();
+});
+
+// init
+renderCards(DRUGS);
+</script>
+</body>
+</html>
