@@ -158,7 +158,18 @@
   .badge-conventional { background: rgba(121,192,255,.15); color: var(--accent-conventional); }
 
   /* indication tags */
-  .tags { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 14px 10px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; padding: 0 14px 8px; }
+
+  /* price bar */
+  .price-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 14px 10px;
+    border-top: 1px solid var(--border);
+    background: rgba(255,255,255,.02);
+  }
+  .price-label { font-size: 10px; color: var(--muted); white-space: nowrap; }
+  .price-value { font-family: var(--mono); font-size: 12px; color: var(--accent-warn); font-weight: 500; }
+  .price-note { font-size: 10px; color: var(--muted); }
   .tag {
     font-size: 10px; padding: 2px 7px;
     background: var(--surface2); border-radius: 4px;
@@ -309,10 +320,10 @@ const DRUGS = [
       { label: "EASI/IGA", timing: "16週評価" },
       { label: "感染症", timing: "随時" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IL-4Rα", freq: "隔週", route: "SC", age: "6歳〜", pregnancy: "可（要考慮）", infection: "✓生ワクチン不可" }
+    compare: { onset: "2〜4週", biologicType: "mAb IL-4Rα", freq: "隔週", route: "SC", age: "6歳〜", pregnancy: "可（要考慮）", infection: "✓生ワクチン不可" },
+    price: { unit: "300mg/本", yakka: 53659, note: "維持：隔週1本／月2本" }
   },
   {
-    id: "tralokinumab",
     name: "アドトラーザ",
     generic: "tralokinumab",
     cat: "atopy",
@@ -334,10 +345,10 @@ const DRUGS = [
       { label: "眼症状", timing: "毎回確認" },
       { label: "EASI/IGA", timing: "16週評価" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IL-13", freq: "隔週→月1", route: "SC", age: "成人", pregnancy: "慎重", infection: "✓生ワクチン不可" }
+    compare: { onset: "2〜4週", biologicType: "mAb IL-13", freq: "隔週→月1", route: "SC", age: "成人", pregnancy: "慎重", infection: "✓生ワクチン不可" },
+    price: { unit: "150mg/本", yakka: 21786, note: "維持：隔週2本／月4本" }
   },
   {
-    id: "lebrikizumab",
     name: "イブグリース",
     generic: "lebrikizumab",
     cat: "atopy",
@@ -359,7 +370,8 @@ const DRUGS = [
       { label: "眼症状", timing: "毎回" },
       { label: "EASI/IGA", timing: "16週評価" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IL-13", freq: "隔週→月1", route: "SC", age: "12歳〜", pregnancy: "慎重", infection: "✓生ワクチン不可" }
+    compare: { onset: "2〜4週", biologicType: "mAb IL-13", freq: "隔週→月1", route: "SC", age: "12歳〜", pregnancy: "慎重", infection: "✓生ワクチン不可" },
+    price: { unit: "250mg/本", yakka: 50782, note: "維持：隔週1本／月2本" }
   },
 
   {
@@ -388,7 +400,8 @@ const DRUGS = [
       { label: "EASI/IGA", timing: "16週評価" },
       { label: "眼症状", timing: "毎回" },
     ],
-    compare: { onset: "1〜2週（掻痒）", biologicType: "mAb IL-31RA", freq: "月1回", route: "SC", age: "13歳〜", pregnancy: "慎重", infection: "✓生ワクチン不可" }
+    compare: { onset: "1〜2週（掻痒）", biologicType: "mAb IL-31RA", freq: "月1回", route: "SC", age: "13歳〜", pregnancy: "慎重", infection: "✓生ワクチン不可" },
+    price: { unit: "60mg/本", yakka: 117181, note: "月1本" }
   },
 
   // ━━━ JAK阻害薬（アトピー）━━━
@@ -423,7 +436,8 @@ const DRUGS = [
       { label: "TB検査", timing: "投与前必須" },
       { label: "B型肝炎", timing: "投与前必須" },
     ],
-    compare: { onset: "1〜2週", biologicType: "JAK1/2", freq: "1日1回", route: "経口", age: "15歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+    compare: { onset: "1〜2週", biologicType: "JAK1/2", freq: "1日1回", route: "経口", age: "15歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" },
+    price: { unit: "4mg/錠", yakka: 4920, note: "月約14.8万円（薬価×30）" }
   },
   {
     id: "upadacitinib",
@@ -456,7 +470,8 @@ const DRUGS = [
       { label: "TB検査", timing: "投与前必須" },
       { label: "B型肝炎", timing: "投与前必須" },
     ],
-    compare: { onset: "1〜2週", biologicType: "JAK1選択的", freq: "1日1回", route: "経口", age: "12歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+    compare: { onset: "1〜2週", biologicType: "JAK1選択的", freq: "1日1回", route: "経口", age: "12歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" },
+    price: { unit: "15mg/錠", yakka: 4707, note: "月約14.1万円（薬価×30）" }
   },
   {
     id: "abrocitinib",
@@ -486,7 +501,8 @@ const DRUGS = [
       { label: "TB検査", timing: "投与前必須" },
       { label: "B型肝炎", timing: "投与前必須" },
     ],
-    compare: { onset: "1〜2週", biologicType: "JAK1選択的", freq: "1日1回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+    compare: { onset: "1〜2週", biologicType: "JAK1選択的", freq: "1日1回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" },
+    price: { unit: "100mg/錠", yakka: 5221, note: "月約15.7万円（薬価×30）" }
   },
 
   // ━━━ 乾癬バイオ ━━━
@@ -517,7 +533,8 @@ const DRUGS = [
       { label: "IBD症状", timing: "毎回確認" },
       { label: "感染症", timing: "随時" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IL-17A", freq: "月1回", route: "SC", age: "成人（6歳〜一部）", pregnancy: "慎重", infection: "カンジダ注意" }
+    compare: { onset: "2〜4週", biologicType: "mAb IL-17A", freq: "月1回", route: "SC", age: "成人（6歳〜一部）", pregnancy: "慎重", infection: "カンジダ注意" },
+    price: { unit: "300mg/本", yakka: 95261, note: "維持：月1本（300mg）" }
   },
   {
     id: "ixekizumab",
@@ -542,7 +559,8 @@ const DRUGS = [
       { label: "PASI評価", timing: "12週" },
       { label: "IBD症状", timing: "毎回" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IL-17A", freq: "2週→月1", route: "SC", age: "成人（6歳〜一部）", pregnancy: "慎重", infection: "カンジダ注意" }
+    compare: { onset: "2〜4週", biologicType: "mAb IL-17A", freq: "2週→月1", route: "SC", age: "成人（6歳〜一部）", pregnancy: "慎重", infection: "カンジダ注意" },
+    price: { unit: "80mg/本", yakka: 96889, note: "維持：月1本（80mg）" }
   },
   {
     id: "bimekizumab",
@@ -568,7 +586,8 @@ const DRUGS = [
       { label: "カンジダ症状", timing: "毎回確認" },
       { label: "IBD症状", timing: "毎回" },
     ],
-    compare: { onset: "1〜2週", biologicType: "mAb IL-17A/F", freq: "8週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "カンジダ頻度高" }
+    compare: { onset: "1〜2週", biologicType: "mAb IL-17A/F", freq: "8週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "カンジダ頻度高" },
+    price: { unit: "320mg（160mg×2）/回", yakka: 313756, note: "維持：8週ごと" }
   },
   {
     id: "risankizumab",
@@ -593,7 +612,8 @@ const DRUGS = [
       { label: "TB検査", timing: "投与前必須" },
       { label: "PASI評価", timing: "16週" },
     ],
-    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "12週ごと", route: "SC", age: "成人（1歳〜一部）", pregnancy: "慎重", infection: "TB注意" }
+    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "12週ごと", route: "SC", age: "成人（1歳〜一部）", pregnancy: "慎重", infection: "TB注意" },
+    price: { unit: "150mg/本", yakka: 217889, note: "維持：12週ごと" }
   },
   {
     id: "guselkumab",
@@ -619,7 +639,8 @@ const DRUGS = [
       { label: "TB検査", timing: "投与前" },
       { label: "PASI評価", timing: "16週" },
     ],
-    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "8週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "TB注意" }
+    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "8週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "TB注意" },
+    price: { unit: "100mg/本", yakka: 182629, note: "維持：8週ごと" }
   },
   {
     id: "tildrakizumab",
@@ -642,7 +663,8 @@ const DRUGS = [
       { label: "TB検査", timing: "投与前" },
       { label: "PASI評価", timing: "16週" },
     ],
-    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "12週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "TB注意" }
+    compare: { onset: "4〜8週", biologicType: "mAb IL-23p19", freq: "12週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "TB注意" },
+    price: { unit: "100mg/本", yakka: 200598, note: "維持：12週ごと" }
   },
   {
     id: "ustekinumab",
@@ -668,7 +690,8 @@ const DRUGS = [
       { label: "PASI評価", timing: "12週" },
       { label: "神経症状", timing: "随時（RPLS）" },
     ],
-    compare: { onset: "4〜8週", biologicType: "mAb IL-12/23p40", freq: "12週ごと", route: "SC/IV", age: "12歳〜", pregnancy: "慎重", infection: "TB注意" }
+    compare: { onset: "4〜8週", biologicType: "mAb IL-12/23p40", freq: "12週ごと", route: "SC/IV", age: "12歳〜", pregnancy: "慎重", infection: "TB注意" },
+    price: { unit: "45mg/本", yakka: 223441, note: "維持：12週ごと" }
   },
   {
     id: "brodalumab",
@@ -695,7 +718,8 @@ const DRUGS = [
       { label: "IBD症状", timing: "毎回" },
       { label: "PASI評価", timing: "12週" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IL-17RA", freq: "2週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "IBD禁忌" }
+    compare: { onset: "2〜4週", biologicType: "mAb IL-17RA", freq: "2週ごと", route: "SC", age: "成人", pregnancy: "慎重", infection: "IBD禁忌" },
+    price: { unit: "210mg/本", yakka: 89082, note: "維持：2週ごと1本" }
   },
 
   {
@@ -723,7 +747,8 @@ const DRUGS = [
       { label: "B型肝炎", timing: "投与前推奨" },
       { label: "PASI/IGA", timing: "16週評価" },
     ],
-    compare: { onset: "2〜4週", biologicType: "TYK2阻害（経口）", freq: "1日1回", route: "経口", age: "成人", pregnancy: "慎重", infection: "TB注意・生ワクチン不可" }
+    compare: { onset: "2〜4週", biologicType: "TYK2阻害（経口）", freq: "1日1回", route: "経口", age: "成人", pregnancy: "慎重", infection: "TB注意・生ワクチン不可" },
+    price: { unit: "6mg/錠", yakka: 2533, note: "月約7.6万円（2533.4円×30日）" }
   },
 
   // ━━━ その他 ━━━
@@ -750,7 +775,8 @@ const DRUGS = [
       { label: "アナフィラキシー", timing: "投与後30分必須観察" },
       { label: "UAS7スコア", timing: "12週評価" },
     ],
-    compare: { onset: "2〜4週", biologicType: "mAb IgE", freq: "月1回", route: "SC", age: "12歳〜", pregnancy: "慎重", infection: "寄生虫注意" }
+    compare: { onset: "2〜4週", biologicType: "mAb IgE", freq: "月1回", route: "SC", age: "12歳〜", pregnancy: "慎重", infection: "寄生虫注意" },
+    price: { unit: "300mg/本", yakka: 60199, note: "維持：月1本（300mg）" }
   },
   {
     id: "dupilumab_pn",
@@ -773,7 +799,8 @@ const DRUGS = [
       { label: "NRS（掻痒）", timing: "毎回" },
       { label: "眼症状", timing: "毎回" },
     ],
-    compare: { onset: "4〜8週", biologicType: "mAb IL-4Rα", freq: "隔週", route: "SC", age: "成人", pregnancy: "可（要考慮）", infection: "✓生ワクチン不可" }
+    compare: { onset: "4〜8週", biologicType: "mAb IL-4Rα", freq: "隔週", route: "SC", age: "成人", pregnancy: "可（要考慮）", infection: "✓生ワクチン不可" },
+    price: { unit: "300mg/本", yakka: 53659, note: "維持：隔週1本" }
   },
   {
     id: "ritlecitinib",
@@ -803,7 +830,8 @@ const DRUGS = [
       { label: "TB・B型肝炎", timing: "投与前必須" },
       { label: "脂質", timing: "投与前・定期" },
     ],
-    compare: { onset: "12〜24週", biologicType: "JAK3/TEC阻害", freq: "1日1回", route: "経口", age: "12歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+    compare: { onset: "12〜24週", biologicType: "JAK3/TEC阻害", freq: "1日1回", route: "経口", age: "12歳〜", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" },
+    price: { unit: "50mg/カプセル", yakka: 5584, note: "月約16.8万円（薬価×30）" }
   },
   {
     id: "baricitinib_aa",
@@ -829,7 +857,8 @@ const DRUGS = [
       { label: "CBC・脂質", timing: "定期" },
       { label: "TB・B肝", timing: "投与前" },
     ],
-    compare: { onset: "12〜24週", biologicType: "JAK1/2", freq: "1日1回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" }
+    compare: { onset: "12〜24週", biologicType: "JAK1/2", freq: "1日1回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "帯状疱疹・TB注意" },
+    price: { unit: "2mg/錠", yakka: 2484, note: "円脱毛：月約7.5万円（2mg×30）" }
   },
 
   // ━━━ 従来型全身療法 ━━━
@@ -862,7 +891,8 @@ const DRUGS = [
       { label: "妊娠検査（女性）", timing: "投与前・毎月" },
       { label: "骨X線", timing: "長期使用時" },
     ],
-    compare: { onset: "4〜8週", biologicType: "レチノイド", freq: "1日1回", route: "経口", age: "成人（女性厳格管理）", pregnancy: "絶対禁忌", infection: "特になし" }
+    compare: { onset: "4〜8週", biologicType: "レチノイド", freq: "1日1回", route: "経口", age: "成人（女性厳格管理）", pregnancy: "絶対禁忌", infection: "特になし" },
+    price: { unit: "10mg/カプセル", yakka: 95, note: "月約3千〜1万円（用量による）" }
   },
   {
     id: "cyclosporine",
@@ -893,7 +923,8 @@ const DRUGS = [
       { label: "CBC・肝機能", timing: "投与前・定期" },
       { label: "脂質・尿酸", timing: "投与前・定期" },
     ],
-    compare: { onset: "2〜4週", biologicType: "カルシニューリン阻害", freq: "1日2回", route: "経口", age: "成人・小児", pregnancy: "慎重（有益性判断）", infection: "感染・悪性腫瘍注意" }
+    compare: { onset: "2〜4週", biologicType: "カルシニューリン阻害", freq: "1日2回", route: "経口", age: "成人・小児", pregnancy: "慎重（有益性判断）", infection: "感染・悪性腫瘍注意" },
+    price: { unit: "25mg/カプセル", yakka: 104, note: "月約1〜2万円（3mg/kg/日目安）" }
   },
   {
     id: "apremilast",
@@ -927,7 +958,8 @@ const DRUGS = [
       { label: "eGFR", timing: "投与前（減量判断）" },
       { label: "PASI/BSA", timing: "16〜24週評価" },
     ],
-    compare: { onset: "4〜8週", biologicType: "PDE4阻害", freq: "1日2回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "免疫抑制なし" }
+    compare: { onset: "4〜8週", biologicType: "PDE4阻害", freq: "1日2回", route: "経口", age: "成人", pregnancy: "禁忌", infection: "免疫抑制なし" },
+    price: { unit: "30mg/錠", yakka: 853, note: "月約5.1万円（853.1円×2錠×30日）" }
   },
   {
     id: "prednisolone",
@@ -961,7 +993,8 @@ const DRUGS = [
       { label: "眼圧・白内障", timing: "長期使用時" },
       { label: "感染症", timing: "随時" },
     ],
-    compare: { onset: "数日（急性期）", biologicType: "経口ステロイド", freq: "1日1〜数回", route: "経口", age: "全年齢", pregnancy: "慎重（有益性判断）", infection: "感染マスク・活動性TB禁忌" }
+    compare: { onset: "数日（急性期）", biologicType: "経口ステロイド", freq: "1日1〜数回", route: "経口", age: "全年齢", pregnancy: "慎重（有益性判断）", infection: "感染マスク・活動性TB禁忌" },
+    price: { unit: "5mg/錠", yakka: 9, note: "月数百〜数千円（安価）" }
   },
 ];
 
@@ -990,6 +1023,11 @@ function renderCards(drugs) {
       <div class="tags">
         ${d.tags.map((t,i)=>`<span class="tag${i===0?' highlight':''}">${t}</span>`).join('')}
       </div>
+      ${d.price ? `<div class="price-bar">
+        <span class="price-label">💴 薬価</span>
+        <span class="price-value">${d.price.yakka.toLocaleString()}円</span>
+        <span class="price-note">/ ${d.price.unit} &nbsp;|&nbsp; ${d.price.note}</span>
+      </div>` : ''}
       <div class="card-body" id="body-${d.id}">
         <!-- 作用機序 -->
         <div class="section">
